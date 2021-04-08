@@ -20,22 +20,20 @@ const sonya = {
   },
 };
 
-scorpion.attack();
-sonya.attack();
-
-const createPlayer = function () {
-  const $player1 = document.createElement('div');
-  $player1.classList.add('player1');
+const createPlayer = function (playerClass, name, health) {
+  const $player = document.createElement('div');
+  $player.classList.add(playerClass);
 
   const $progressbar = document.createElement('div');
   $progressbar.classList.add('progressbar');
 
   const $life = document.createElement('div');
-  $life.classList.add('live');
+  $life.classList.add('life');
+  $life.style.width = health + '%';
 
   const $name = document.createElement('div');
   $name.classList.add('name');
-  $name.innerText = 'scorpion';
+  $name.innerText = name;
 
   const $character = document.createElement('div');
   $character.classList.add('character');
@@ -43,14 +41,15 @@ const createPlayer = function () {
   const $image = document.createElement('img');
   $image.src='http://reactmarathon-api.herokuapp.com/assets/scorpion.gif';
 
-  $player1.appendChild($progressbar);
+  $player.appendChild($progressbar);
   $progressbar.appendChild($life);
   $progressbar.appendChild($name);
-  $player1.appendChild($character);
+  $player.appendChild($character);
   $character.appendChild($image);
 
-  return $player1;
+  const $arena = document.querySelector('.arenas');
+  $arena.appendChild($player);
 };
 
-console.log(createPlayer());
-
+createPlayer('player1', 'SCORPION', 50);
+createPlayer('player2', 'SUB-ZERO', 80);
