@@ -60,3 +60,21 @@ const createPlayer = function (player) {
 
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
+
+const $random = document.querySelector('.button');
+
+const changeHP = function (player) {
+  const $playerLife = document.querySelector('.player' + player.player + ' .life');
+  player.hp -= 20;
+  if (player.hp > 0) {
+    $playerLife.style.width = player.hp + '%';
+  } else {
+    player.hp = 0;
+    $playerLife.style.width = player.hp + '%';
+  }
+};
+
+$random.addEventListener('click', function () {
+  changeHP(scorpion);
+  changeHP(subZero);
+});
