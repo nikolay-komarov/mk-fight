@@ -61,17 +61,17 @@ const createPlayer = function (player) {
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
-const $random = document.querySelector('.button');
+const $randomButton = document.querySelector('.button');
 
 const randomHP = function () {
   return Math.ceil(Math.random() * 20);
 };
 
-const playerLose = function (name) {
-  const $playerLose = createElement('div', 'loseTitle');
-  $playerLose.innerText = name + ' lose'
+const playerWins = function (name) {
+  const $playerWin = createElement('div', 'endFightTitle');
+  $playerWin.innerText = name + ' wins'
 
-  return $playerLose;
+  return $playerWin;
 }
 
 const changeHP = function (player) {
@@ -80,14 +80,20 @@ const changeHP = function (player) {
 
   if (player.hp < 0) {
     player.hp = 0;
-    $playerLife.style.width = player.hp + '%';
-    $arena.appendChild(playerLose(player.name));
-  } else {
-    $playerLife.style.width = player.hp + '%';
   }
+
+  $playerLife.style.width = player.hp + '%';
 };
 
-$random.addEventListener('click', function () {
+$randomButton.addEventListener('click', function () {
   changeHP(scorpion);
   changeHP(subZero);
+
+  if (scorpion.hp <= 0) {
+    $arena.appendChild(playerWins(subZero.name));
+    $randomButton.disabled = true;
+  } else if (subZero.hp <= 0) {
+    $arena.appendChild(playerWins(scorpion.name));
+    $randomButton.disabled = true;
+  }
 });
