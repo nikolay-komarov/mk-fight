@@ -63,13 +63,26 @@ $arena.appendChild(createPlayer(subZero));
 
 const $random = document.querySelector('.button');
 
+const randomHP = function () {
+  return Math.ceil(Math.random() * 20);
+};
+
+const playerLose = function (name) {
+  const $playerLose = createElement('div', 'loseTitle');
+  $playerLose.innerText = name + ' lose'
+
+  return $playerLose;
+}
+
 const changeHP = function (player) {
   const $playerLife = document.querySelector('.player' + player.player + ' .life');
-  player.hp -= 20;
-  if (player.hp > 0) {
-    $playerLife.style.width = player.hp + '%';
-  } else {
+  player.hp -= randomHP();
+
+  if (player.hp < 0) {
     player.hp = 0;
+    $playerLife.style.width = player.hp + '%';
+    $arena.appendChild(playerLose(player.name));
+  } else {
     $playerLife.style.width = player.hp + '%';
   }
 };
