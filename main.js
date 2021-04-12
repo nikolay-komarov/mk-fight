@@ -67,11 +67,15 @@ const randomHP = function () {
   return Math.ceil(Math.random() * 20);
 };
 
-const playerWins = function (name) {
-  const $playerWin = createElement('div', 'endFightTitle');
-  $playerWin.innerText = name + ' wins'
+const showResults = function (name) {
+  const $resultTitle = createElement('div', 'endFightTitle');
+  if (name) {
+    $resultTitle.innerText = name + ' wins';
+  } else {
+    $resultTitle.innerText = 'draw';
+  }
 
-  return $playerWin;
+  return $resultTitle;
 }
 
 const changeHP = function (player) {
@@ -89,11 +93,15 @@ $randomButton.addEventListener('click', function () {
   changeHP(scorpion);
   changeHP(subZero);
 
-  if (scorpion.hp <= 0) {
-    $arena.appendChild(playerWins(subZero.name));
+  if (scorpion.hp === 0 || subZero.hp === 0) {
     $randomButton.disabled = true;
-  } else if (subZero.hp <= 0) {
-    $arena.appendChild(playerWins(scorpion.name));
-    $randomButton.disabled = true;
+  }
+
+  if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+    $arena.appendChild(showResults(subZero.name));
+  } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    $arena.appendChild(showResults(scorpion.name));
+  } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    $arena.appendChild(showResults());
   }
 });
