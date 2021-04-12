@@ -102,6 +102,26 @@ const showResults = function (name) {
   return $resultTitle;
 }
 
+const createReloadButton = function () {
+  const $reloadWrap = createElement('div', 'reloadWrap');
+  const $reloadButton = createElement('button', 'button');
+  $reloadButton.innerText = 'Restart';
+
+  $reloadWrap.appendChild($reloadButton);
+
+  $reloadWrap.classList.add('visually-hidden');
+
+  return {$reloadWrap, $reloadButton};
+};
+
+const {$reloadWrap, $reloadButton} = createReloadButton();
+
+$arena.appendChild($reloadWrap);
+
+$reloadButton.addEventListener('click', function () {
+  window.location.reload();
+});
+
 $randomButton.addEventListener('click', function () {
   scorpion.changeHP(randomHP(RANDOM_HP_PARAM));
   scorpion.renderHP();
@@ -110,6 +130,7 @@ $randomButton.addEventListener('click', function () {
 
   if (scorpion.hp === 0 || subZero.hp === 0) {
     $randomButton.disabled = true;
+    $reloadWrap.classList.remove('visually-hidden');
   }
 
   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
