@@ -1,6 +1,26 @@
 console.log('Fight...');
 
-const $arena = document.querySelector('.arenas');
+const RANDOM_HP_PARAM = 20;
+
+const randomHP = function (randomHPParam) {
+  return Math.ceil(Math.random() * randomHPParam);
+};
+
+const changeHP = function (changeHPPoints) {
+  this.hp -= changeHPPoints;
+
+  if (this.hp < 0) {
+    this.hp = 0;
+  }
+};
+
+const elHP = function () {
+  return document.querySelector('.player' + this.player + ' .life');
+};
+
+const renderHP = function () {
+  this.elHP().style.width = this.hp + '%';
+};
 
 const scorpion = {
   player: 1,
@@ -11,6 +31,9 @@ const scorpion = {
   attack: function() {
     console.log(this.name + ' fight...');
   },
+  changeHP,
+  elHP, //todo: изменить на получение элемента?
+  renderHP,
 };
 
 const subZero = {
@@ -22,6 +45,9 @@ const subZero = {
   attack: function() {
     console.log(this.name + ' fight...');
   },
+  changeHP,
+  elHP, //todo: изменить на получение элемента?
+  renderHP,
 };
 
 const createElement = function (teg, className) {
@@ -58,42 +84,60 @@ const createPlayer = function (player) {
   return $player;
 };
 
+const $arena = document.querySelector('.arenas');
+
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
 const $randomButton = document.querySelector('.button');
 
-const randomHP = function () {
-  return Math.ceil(Math.random() * 20);
-};
-
-const playerWins = function (name) {
-  const $playerWin = createElement('div', 'endFightTitle');
-  $playerWin.innerText = name + ' wins'
-
-  return $playerWin;
-}
-
-const changeHP = function (player) {
-  const $playerLife = document.querySelector('.player' + player.player + ' .life');
-  player.hp -= randomHP();
-
-  if (player.hp < 0) {
-    player.hp = 0;
+const showResults = function (name) {
+  const $resultTitle = createElement('div', 'endFightTitle');
+  if (name) {
+    $resultTitle.innerText = name + ' wins';
+  } else {
+    $resultTitle.innerText = 'draw';
   }
 
-  $playerLife.style.width = player.hp + '%';
+  return $resultTitle;
+}
+
+const createReloadButton = function () {
+  const $reloadWrap = createElement('div', 'reloadWrap');
+  const $reloadButton = createElement('button', 'button');
+  $reloadButton.innerText = 'Restart';
+
+  $reloadWrap.appendChild($reloadButton);
+
+  $reloadWrap.classList.add('visually-hidden');
+
+  return {$reloadWrap, $reloadButton};
 };
 
-$randomButton.addEventListener('click', function () {
-  changeHP(scorpion);
-  changeHP(subZero);
+const {$reloadWrap, $reloadButton} = createReloadButton();
 
-  if (scorpion.hp <= 0) {
-    $arena.appendChild(playerWins(subZero.name));
+$arena.appendChild($reloadWrap);
+
+$reloadButton.addEventListener('click', function () {
+  window.location.reload();
+});
+
+$randomButton.addEventListener('click', function () {
+  scorpion.changeHP(randomHP(RANDOM_HP_PARAM));
+  scorpion.renderHP();
+  subZero.changeHP(randomHP(RANDOM_HP_PARAM));
+  subZero.renderHP();
+
+  if (scorpion.hp === 0 || subZero.hp === 0) {
     $randomButton.disabled = true;
-  } else if (subZero.hp <= 0) {
-    $arena.appendChild(playerWins(scorpion.name));
-    $randomButton.disabled = true;
+    $reloadWrap.classList.remove('visually-hidden');
+  }
+
+  if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+    $arena.appendChild(showResults(subZero.name));
+  } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    $arena.appendChild(showResults(scorpion.name));
+  } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    $arena.appendChild(showResults());
   }
 });
