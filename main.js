@@ -2,6 +2,14 @@ console.log('Fight...');
 
 const RANDOM_HP_PARAM = 20;
 
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20,
+};
+
+const ATTACK = ['head', 'body', 'foot'];
+
 const getRandom = function (value) {
   return Math.ceil(Math.random() * value);
 };
