@@ -1,13 +1,10 @@
 console.log('Fight...');
 
-const RANDOM_HP_PARAM = 20;
-
 const HIT = {
   head: 30,
   body: 25,
   foot: 20,
 };
-
 const ATTACK = ['head', 'body', 'foot'];
 
 const getRandom = function (value) {
@@ -97,7 +94,7 @@ const $arena = document.querySelector('.arenas');
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
-// const $randomButton = document.querySelector('.button');
+const $randomButton = document.querySelector('.button');
 
 const showResults = function (name) {
   const $resultTitle = createElement('div', 'endFightTitle');
@@ -123,26 +120,6 @@ const createReloadButton = function () {
   $arena.appendChild($reloadButtonWrap);
 };
 
-// $randomButton.addEventListener('click', function () {
-//   scorpion.changeHP(getRandom(RANDOM_HP_PARAM));
-//   scorpion.renderHP();
-//   subZero.changeHP(getRandom(RANDOM_HP_PARAM));
-//   subZero.renderHP();
-//
-//   if (scorpion.hp === 0 || subZero.hp === 0) {
-//     $randomButton.disabled = true;
-//     createReloadButton();
-//   }
-//
-//   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
-//     $arena.appendChild(showResults(subZero.name));
-//   } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
-//     $arena.appendChild(showResults(scorpion.name));
-//   } else if (scorpion.hp === 0 && subZero.hp === 0) {
-//     $arena.appendChild(showResults());
-//   }
-// });
-
 const enemyAttack = function () {
   const hit = ATTACK[getRandom(3)-1];
   const defence = ATTACK[getRandom(3)-1];
@@ -155,6 +132,7 @@ const enemyAttack = function () {
 };
 
 const $formFight = document.querySelector('.control');
+
 $formFight.addEventListener('submit', function (evt) {
   evt.preventDefault();
   const enemy = enemyAttack();
@@ -174,5 +152,29 @@ $formFight.addEventListener('submit', function (evt) {
 
   console.log('a: ', attack);
   console.log('e: ', enemy);
+
+  if (enemy.hit !== attack.defence) {
+    console.log('hit player');
+    scorpion.changeHP(enemy.value);
+    scorpion.renderHP();
+  }
+  if (attack.hit !== enemy.defence) {
+    console.log('hit enemy');
+    subZero.changeHP(attack.value);
+    subZero.renderHP();
+  }
+
+  if (scorpion.hp === 0 || subZero.hp === 0) {
+    $randomButton.disabled = true;
+    createReloadButton();
+  }
+
+  if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+    $arena.appendChild(showResults(subZero.name));
+  } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    $arena.appendChild(showResults(scorpion.name));
+  } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    $arena.appendChild(showResults());
+  }
 });
 
