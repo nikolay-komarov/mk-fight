@@ -2,8 +2,8 @@ console.log('Fight...');
 
 const RANDOM_HP_PARAM = 20;
 
-const randomHP = function (randomHPParam) {
-  return Math.ceil(Math.random() * randomHPParam);
+const getRandom = function (value) {
+  return Math.ceil(Math.random() * value);
 };
 
 const changeHP = function (changeHPPoints) {
@@ -32,7 +32,7 @@ const scorpion = {
     console.log(this.name + ' fight...');
   },
   changeHP,
-  elHP, //todo: изменить на получение элемента?
+  elHP,
   renderHP,
 };
 
@@ -46,7 +46,7 @@ const subZero = {
     console.log(this.name + ' fight...');
   },
   changeHP,
-  elHP, //todo: изменить на получение элемента?
+  elHP,
   renderHP,
 };
 
@@ -89,7 +89,7 @@ const $arena = document.querySelector('.arenas');
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
-const $randomButton = document.querySelector('.button');
+// const $randomButton = document.querySelector('.button');
 
 const showResults = function (name) {
   const $resultTitle = createElement('div', 'endFightTitle');
@@ -103,41 +103,42 @@ const showResults = function (name) {
 }
 
 const createReloadButton = function () {
-  const $reloadWrap = createElement('div', 'reloadWrap');
+  const $reloadButtonWrap = createElement('div', 'reloadWrap');
   const $reloadButton = createElement('button', 'button');
-  $reloadButton.innerText = 'Restart';
+  $reloadButton.innerText = 'Reload';
 
-  $reloadWrap.appendChild($reloadButton);
+  $reloadButton.addEventListener('click', function () {
+    window.location.reload();
+  });
 
-  $reloadWrap.classList.add('visually-hidden');
-
-  return {$reloadWrap, $reloadButton};
+  $reloadButtonWrap.appendChild($reloadButton);
+  $arena.appendChild($reloadButtonWrap);
 };
 
-const {$reloadWrap, $reloadButton} = createReloadButton();
+// $randomButton.addEventListener('click', function () {
+//   scorpion.changeHP(getRandom(RANDOM_HP_PARAM));
+//   scorpion.renderHP();
+//   subZero.changeHP(getRandom(RANDOM_HP_PARAM));
+//   subZero.renderHP();
+//
+//   if (scorpion.hp === 0 || subZero.hp === 0) {
+//     $randomButton.disabled = true;
+//     createReloadButton();
+//   }
+//
+//   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+//     $arena.appendChild(showResults(subZero.name));
+//   } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+//     $arena.appendChild(showResults(scorpion.name));
+//   } else if (scorpion.hp === 0 && subZero.hp === 0) {
+//     $arena.appendChild(showResults());
+//   }
+// });
 
-$arena.appendChild($reloadWrap);
 
-$reloadButton.addEventListener('click', function () {
-  window.location.reload();
-});
+const $form = document.querySelector('.control');
+$form.addEventListener('submit', function (evt) {
+  evt.preventDefault();
 
-$randomButton.addEventListener('click', function () {
-  scorpion.changeHP(randomHP(RANDOM_HP_PARAM));
-  scorpion.renderHP();
-  subZero.changeHP(randomHP(RANDOM_HP_PARAM));
-  subZero.renderHP();
-
-  if (scorpion.hp === 0 || subZero.hp === 0) {
-    $randomButton.disabled = true;
-    $reloadWrap.classList.remove('visually-hidden');
-  }
-
-  if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
-    $arena.appendChild(showResults(subZero.name));
-  } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
-    $arena.appendChild(showResults(scorpion.name));
-  } else if (scorpion.hp === 0 && subZero.hp === 0) {
-    $arena.appendChild(showResults());
-  }
-});
+  console.log('### submit');
+})
