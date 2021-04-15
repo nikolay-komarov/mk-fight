@@ -143,10 +143,22 @@ const createReloadButton = function () {
 //   }
 // });
 
+const enemyAttack = function () {
+  const hit = ATTACK[getRandom(3)-1];
+  const defence = ATTACK[getRandom(3)-1];
 
-const $form = document.querySelector('.control');
-$form.addEventListener('submit', function (evt) {
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence
+  }
+};
+
+const $formFight = document.querySelector('.control');
+$formFight.addEventListener('submit', function (evt) {
   evt.preventDefault();
+  const enemy = enemyAttack();
 
-  console.log('### submit');
-})
+  console.log('e: ', enemy);
+});
+
