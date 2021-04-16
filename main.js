@@ -1,9 +1,14 @@
 console.log('Fight...');
 
-const RANDOM_HP_PARAM = 20;
+const HIT = {
+  head: 30,
+  body: 25,
+  foot: 20,
+};
+const ATTACK = ['head', 'body', 'foot'];
 
-const randomHP = function (randomHPParam) {
-  return Math.ceil(Math.random() * randomHPParam);
+const getRandom = function (value) {
+  return Math.ceil(Math.random() * value);
 };
 
 const changeHP = function (changeHPPoints) {
@@ -32,7 +37,7 @@ const scorpion = {
     console.log(this.name + ' fight...');
   },
   changeHP,
-  elHP, //todo: изменить на получение элемента?
+  elHP,
   renderHP,
 };
 
@@ -46,7 +51,7 @@ const subZero = {
     console.log(this.name + ' fight...');
   },
   changeHP,
-  elHP, //todo: изменить на получение элемента?
+  elHP,
   renderHP,
 };
 
@@ -103,34 +108,65 @@ const showResults = function (name) {
 }
 
 const createReloadButton = function () {
-  const $reloadWrap = createElement('div', 'reloadWrap');
+  const $reloadButtonWrap = createElement('div', 'reloadWrap');
   const $reloadButton = createElement('button', 'button');
-  $reloadButton.innerText = 'Restart';
+  $reloadButton.innerText = 'Reload';
 
-  $reloadWrap.appendChild($reloadButton);
+  $reloadButton.addEventListener('click', function () {
+    window.location.reload();
+  });
 
-  $reloadWrap.classList.add('visually-hidden');
-
-  return {$reloadWrap, $reloadButton};
+  $reloadButtonWrap.appendChild($reloadButton);
+  $arena.appendChild($reloadButtonWrap);
 };
 
-const {$reloadWrap, $reloadButton} = createReloadButton();
+const enemyAttack = function () {
+  const hit = ATTACK[getRandom(3)-1];
+  const defence = ATTACK[getRandom(3)-1];
 
-$arena.appendChild($reloadWrap);
+  return {
+    value: getRandom(HIT[hit]),
+    hit,
+    defence
+  }
+};
 
-$reloadButton.addEventListener('click', function () {
-  window.location.reload();
-});
+const $formFight = document.querySelector('.control');
 
-$randomButton.addEventListener('click', function () {
-  scorpion.changeHP(randomHP(RANDOM_HP_PARAM));
-  scorpion.renderHP();
-  subZero.changeHP(randomHP(RANDOM_HP_PARAM));
-  subZero.renderHP();
+$formFight.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+  const enemy = enemyAttack();
+
+  const attack = {};
+  for (item of $formFight) {
+    if (item.checked && item.name === 'hit') {
+      attack.value = getRandom(HIT[item.value]);
+      attack.hit = item.value;
+    }
+    if (item.checked && item.name === 'defence') {
+      attack.defence = item.value;
+    }
+
+    item.checked = false;
+  }
+
+  console.log('a: ', attack);
+  console.log('e: ', enemy);
+
+  if (enemy.hit !== attack.defence) {
+    console.log('hit player');
+    scorpion.changeHP(enemy.value);
+    scorpion.renderHP();
+  }
+  if (attack.hit !== enemy.defence) {
+    console.log('hit enemy');
+    subZero.changeHP(attack.value);
+    subZero.renderHP();
+  }
 
   if (scorpion.hp === 0 || subZero.hp === 0) {
     $randomButton.disabled = true;
-    $reloadWrap.classList.remove('visually-hidden');
+    createReloadButton();
   }
 
   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
@@ -141,3 +177,4 @@ $randomButton.addEventListener('click', function () {
     $arena.appendChild(showResults());
   }
 });
+
