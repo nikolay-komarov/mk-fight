@@ -8,6 +8,8 @@ const HIT = {
 const ATTACK = ['head', 'body', 'foot'];
 import {logs} from './logs.js';
 
+import {getCurrentDateToLog} from './utils.js';
+
 const getRandom = function (value) {
   return Math.ceil(Math.random() * value);
 };
@@ -98,9 +100,42 @@ $arena.appendChild(createPlayer(subZero));
 
 const $randomButton = document.querySelector('.button');
 
-const generateLog = function (type, playerAttack, playerDefence) {
-  const text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', playerAttack.name).replace('[playerDefence]', playerDefence.name);
-  const elLog = `<p>${text}</p>`
+const generateLog = function (type, player1, player2, hitValue) {
+  let text = ``;
+
+  switch (type) {
+    case 'start':
+      text = logs.start.replace('[time]', getCurrentDateToLog()).replace('[player1]', player1.name).replace('[player2]', player2.name);
+      break;
+    case 'hit':
+      text = getCurrentDateToLog() + ': '
+        + logs.hit[getRandom(logs.hit.length - 1)]
+        .replace('[time]', getCurrentDateToLog())
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+        + '-' + hitValue + ' '
+        + player2.hp + '/100;';
+      break;
+    case 'defence':
+      text = getCurrentDateToLog() + ': '
+        + logs.defence[getRandom(logs.hit.length - 1)]
+          .replace('[playerKick]', player1.name)
+          .replace('[playerDefence]', player2.name);
+      break;
+    case 'end':
+      text = getCurrentDateToLog() + ': '
+        + logs.end[getRandom(logs.end.length - 1)]
+        .replace('[playerWins]', player1.name)
+        .replace('[playerLose]', player2.name);
+      break;
+    case 'draw':
+      text = getCurrentDateToLog() + ': ' + logs.draw;
+      break;
+    default:
+      text = ``;
+  }
+
+  const elLog = `<p>${text}</p>`;
   $chat.insertAdjacentHTML('afterbegin', elLog);
 };
 
@@ -164,10 +199,13 @@ const showResult = function () {
   }
 
   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+    generateLog('end', subZero, scorpion);
     $arena.appendChild(showResults(subZero.name));
   } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    generateLog('end', scorpion, subZero);
     $arena.appendChild(showResults(scorpion.name));
   } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    generateLog('draw');
     $arena.appendChild(showResults());
   }
 };
@@ -182,14 +220,21 @@ $formFight.addEventListener('submit', function (evt) {
   if (enemy.hit !== player.defence) {
     scorpion.changeHP(enemy.value);
     scorpion.renderHP();
-    generateLog('hit', subZero, scorpion);
+    generateLog('hit', subZero, scorpion, enemy.value);
   }
   if (player.hit !== enemy.defence) {
     subZero.changeHP(player.value);
     subZero.renderHP();
-    generateLog('hit', scorpion, subZero);
+    generateLog('hit', scorpion, subZero, player.value);
+  }
+  if (player.hit === enemy.defence) {
+    generateLog('defence', scorpion, subZero);
+  }
+  if (player.hit === enemy.defence) {
+    generateLog('defence', subZero, scorpion);
   }
 
   showResult();
 });
 
+generateLog('start', scorpion, subZero);
