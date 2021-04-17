@@ -8,8 +8,6 @@ const HIT = {
 const ATTACK = ['head', 'body', 'foot'];
 import {logs} from './logs.js';
 
-console.log(logs);
-
 const getRandom = function (value) {
   return Math.ceil(Math.random() * value);
 };
@@ -93,11 +91,18 @@ const createPlayer = function (player) {
 };
 
 const $arena = document.querySelector('.arenas');
+const $chat = document.querySelector('.chat');
 
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
 const $randomButton = document.querySelector('.button');
+
+const generateLog = function (type, playerAttack, playerDefence) {
+  const text = logs[type][getRandom(logs[type].length - 1)].replace('[playerKick]', playerAttack.name).replace('[playerDefence]', playerDefence.name);
+  const elLog = `<p>${text}</p>`
+  $chat.insertAdjacentHTML('afterbegin', elLog);
+};
 
 const showResults = function (name) {
   const $resultTitle = createElement('div', 'endFightTitle');
@@ -174,18 +179,15 @@ $formFight.addEventListener('submit', function (evt) {
   const enemy = enemyAttack();
   const player = playerAttack();
 
-  console.log('a: ', player);
-  console.log('e: ', enemy);
-
   if (enemy.hit !== player.defence) {
-    console.log('hit player');
     scorpion.changeHP(enemy.value);
     scorpion.renderHP();
+    generateLog('hit', subZero, scorpion);
   }
   if (player.hit !== enemy.defence) {
-    console.log('hit enemy');
     subZero.changeHP(player.value);
     subZero.renderHP();
+    generateLog('hit', scorpion, subZero);
   }
 
   showResult();
