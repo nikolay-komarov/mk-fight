@@ -6,6 +6,9 @@ const HIT = {
   foot: 20,
 };
 const ATTACK = ['head', 'body', 'foot'];
+import {logs} from './logs.js';
+
+console.log(logs);
 
 const getRandom = function (value) {
   return Math.ceil(Math.random() * value);
@@ -134,7 +137,7 @@ const enemyAttack = function () {
 const playerAttack = function () {
   const attack = {};
 
-  for (item of $formFight) {
+  for (let item of $formFight) {
     if (item.checked && item.name === 'hit') {
       attack.value = getRandom(HIT[item.value]);
       attack.hit = item.value;
