@@ -6,6 +6,9 @@ const HIT = {
   foot: 20,
 };
 const ATTACK = ['head', 'body', 'foot'];
+import {logs} from './logs.js';
+
+import {getCurrentDateToLog} from './utils.js';
 
 const getRandom = function (value) {
   return Math.ceil(Math.random() * value);
@@ -90,11 +93,51 @@ const createPlayer = function (player) {
 };
 
 const $arena = document.querySelector('.arenas');
+const $chat = document.querySelector('.chat');
 
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
 const $randomButton = document.querySelector('.button');
+
+const generateLog = function (type, player1, player2, hitValue) {
+  let text = ``;
+
+  switch (type) {
+    case 'start':
+      text = logs.start.replace('[time]', getCurrentDateToLog()).replace('[player1]', player1.name).replace('[player2]', player2.name);
+      break;
+    case 'hit':
+      text = getCurrentDateToLog() + ': '
+        + logs.hit[getRandom(logs.hit.length - 1)]
+        .replace('[time]', getCurrentDateToLog())
+        .replace('[playerKick]', player1.name)
+        .replace('[playerDefence]', player2.name)
+        + '-' + hitValue + ' '
+        + player2.hp + '/100;';
+      break;
+    case 'defence':
+      text = getCurrentDateToLog() + ': '
+        + logs.defence[getRandom(logs.hit.length - 1)]
+          .replace('[playerKick]', player1.name)
+          .replace('[playerDefence]', player2.name);
+      break;
+    case 'end':
+      text = getCurrentDateToLog() + ': '
+        + logs.end[getRandom(logs.end.length - 1)]
+        .replace('[playerWins]', player1.name)
+        .replace('[playerLose]', player2.name);
+      break;
+    case 'draw':
+      text = getCurrentDateToLog() + ': ' + logs.draw;
+      break;
+    default:
+      text = ``;
+  }
+
+  const elLog = `<p>${text}</p>`;
+  $chat.insertAdjacentHTML('afterbegin', elLog);
+};
 
 const showResults = function (name) {
   const $resultTitle = createElement('div', 'endFightTitle');
@@ -131,14 +174,10 @@ const enemyAttack = function () {
   }
 };
 
-const $formFight = document.querySelector('.control');
-
-$formFight.addEventListener('submit', function (evt) {
-  evt.preventDefault();
-  const enemy = enemyAttack();
-
+const playerAttack = function () {
   const attack = {};
-  for (item of $formFight) {
+
+  for (let item of $formFight) {
     if (item.checked && item.name === 'hit') {
       attack.value = getRandom(HIT[item.value]);
       attack.hit = item.value;
@@ -150,31 +189,52 @@ $formFight.addEventListener('submit', function (evt) {
     item.checked = false;
   }
 
-  console.log('a: ', attack);
-  console.log('e: ', enemy);
+  return attack;
+};
 
-  if (enemy.hit !== attack.defence) {
-    console.log('hit player');
-    scorpion.changeHP(enemy.value);
-    scorpion.renderHP();
-  }
-  if (attack.hit !== enemy.defence) {
-    console.log('hit enemy');
-    subZero.changeHP(attack.value);
-    subZero.renderHP();
-  }
-
+const showResult = function () {
   if (scorpion.hp === 0 || subZero.hp === 0) {
     $randomButton.disabled = true;
     createReloadButton();
   }
 
   if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+    generateLog('end', subZero, scorpion);
     $arena.appendChild(showResults(subZero.name));
   } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    generateLog('end', scorpion, subZero);
     $arena.appendChild(showResults(scorpion.name));
   } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    generateLog('draw');
     $arena.appendChild(showResults());
   }
+};
+
+const $formFight = document.querySelector('.control');
+
+$formFight.addEventListener('submit', function (evt) {
+  evt.preventDefault();
+  const enemy = enemyAttack();
+  const player = playerAttack();
+
+  if (enemy.hit !== player.defence) {
+    scorpion.changeHP(enemy.value);
+    scorpion.renderHP();
+    generateLog('hit', subZero, scorpion, enemy.value);
+  }
+  if (player.hit !== enemy.defence) {
+    subZero.changeHP(player.value);
+    subZero.renderHP();
+    generateLog('hit', scorpion, subZero, player.value);
+  }
+  if (player.hit === enemy.defence) {
+    generateLog('defence', scorpion, subZero);
+  }
+  if (player.hit === enemy.defence) {
+    generateLog('defence', subZero, scorpion);
+  }
+
+  showResult();
 });
 
+generateLog('start', scorpion, subZero);
