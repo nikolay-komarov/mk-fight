@@ -67,21 +67,21 @@ const createElement = function (teg, className) {
   return $el;
 };
 
-const createPlayer = function (player) {
-  const $player = createElement('div', 'player' + player.player);
+const createPlayer = function ({player, hp, name, img}) {
+  const $player = createElement('div', 'player' + player);
 
   const $progressbar = createElement('div', 'progressbar');
 
   const $life = createElement('div', 'life');
-  $life.style.width = player.hp + '%';
+  $life.style.width = hp + '%';
 
   const $name = createElement('div', 'name');
-  $name.innerText = player.name;
+  $name.innerText = name;
 
   const $character = createElement('div', 'character');
 
   const $image = createElement('img');
-  $image.src=player.img;
+  $image.src = img;
 
   $player.appendChild($progressbar);
   $progressbar.appendChild($life);
@@ -101,35 +101,43 @@ $arena.appendChild(createPlayer(subZero));
 const $randomButton = document.querySelector('.button');
 
 const generateLog = function (type, player1, player2, hitValue) {
+  const {
+    name: player1Name,
+  } = player1;
+  const {
+    name: player2Name,
+    hp: player2Hp,
+  } = player2;
+
   let text = ``;
 
   switch (type) {
     case 'start':
-      text = logs.start.replace('[time]', getCurrentDateToLog()).replace('[player1]', player1.name).replace('[player2]', player2.name);
+      text = logs.start.replace('[time]', getCurrentDateToLog()).replace('[player1]', player1Name).replace('[player2]', player2Name);
       break;
     case 'hit':
-      text = getCurrentDateToLog() + ': '
-        + logs.hit[getRandom(logs.hit.length - 1)]
+      text = `${getCurrentDateToLog()}: 
+        ${logs.hit[getRandom(logs.hit.length - 1)]
         .replace('[time]', getCurrentDateToLog())
-        .replace('[playerKick]', player1.name)
-        .replace('[playerDefence]', player2.name)
-        + '-' + hitValue + ' '
-        + player2.hp + '/100;';
+        .replace('[playerKick]', player1Name)
+        .replace('[playerDefence]', player2Name)}
+         -${hitValue}
+         ${player2Hp}/100;`;
       break;
     case 'defence':
-      text = getCurrentDateToLog() + ': '
-        + logs.defence[getRandom(logs.hit.length - 1)]
-          .replace('[playerKick]', player1.name)
-          .replace('[playerDefence]', player2.name);
+      text = `${getCurrentDateToLog()}:
+        ${logs.defence[getRandom(logs.defence.length - 1)]
+        .replace('[playerKick]', player1Name)
+        .replace('[playerDefence]', player2Name)}`;
       break;
     case 'end':
-      text = getCurrentDateToLog() + ': '
-        + logs.end[getRandom(logs.end.length - 1)]
-        .replace('[playerWins]', player1.name)
-        .replace('[playerLose]', player2.name);
+      text = `${getCurrentDateToLog()}: 
+        ${logs.end[getRandom(logs.end.length - 1)]
+        .replace('[playerWins]', player1Name)
+        .replace('[playerLose]', player2Name)}`;
       break;
     case 'draw':
-      text = getCurrentDateToLog() + ': ' + logs.draw;
+      text = `${getCurrentDateToLog()}: ${logs.draw}`;
       break;
     default:
       text = ``;
@@ -192,19 +200,28 @@ const playerAttack = function () {
   return attack;
 };
 
-const showResult = function () {
-  if (scorpion.hp === 0 || subZero.hp === 0) {
+const showResult = function (player1, player2) {
+  const {
+    name: player1Name,
+    hp: player1Hp
+  } = player1;
+  const {
+    name: player2Name,
+    hp: player2Hp
+  } = player2;
+
+  if (player1Hp === 0 || player2Hp === 0) {
     $randomButton.disabled = true;
     createReloadButton();
   }
 
-  if (scorpion.hp === 0 && scorpion.hp <  subZero.hp) {
+  if (player1Hp === 0 && player1Hp <  player2Hp) {
     generateLog('end', subZero, scorpion);
-    $arena.appendChild(showResults(subZero.name));
-  } else if (subZero.hp === 0 && subZero.hp < scorpion.hp) {
+    $arena.appendChild(showResults(player2Name));
+  } else if (player2Hp === 0 && player2Hp < player1Hp) {
     generateLog('end', scorpion, subZero);
-    $arena.appendChild(showResults(scorpion.name));
-  } else if (scorpion.hp === 0 && subZero.hp === 0) {
+    $arena.appendChild(showResults(player1Name));
+  } else if (player1Hp === 0 && player2Hp === 0) {
     generateLog('draw');
     $arena.appendChild(showResults());
   }
@@ -234,7 +251,7 @@ $formFight.addEventListener('submit', function (evt) {
     generateLog('defence', subZero, scorpion);
   }
 
-  showResult();
+  showResult(scorpion, subZero);
 });
 
 generateLog('start', scorpion, subZero);
