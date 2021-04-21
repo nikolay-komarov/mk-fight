@@ -1,4 +1,4 @@
-import {createElement} from "./utils";
+import {createElement} from "./utils.js";
 
 const changeHP = function (changeHPPoints) {
   this.hp -= changeHPPoints;
@@ -44,7 +44,7 @@ export const subZero = {
   renderHP,
 };
 
-export const createPlayer = function ({player, hp, name, img}) {
+export const createPlayer = ({player, hp, name, img}) => {
   const $player = createElement('div', 'player' + player);
 
   const $progressbar = createElement('div', 'progressbar');

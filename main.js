@@ -11,14 +11,13 @@ import {
 } from './utils.js';
 
 const $arena = document.querySelector('.arenas');
-const $chat = document.querySelector('.chat');
 const $randomButton = document.querySelector('.button');
 const $formFight = document.querySelector('.control');
 
 $arena.appendChild(createPlayer(scorpion));
 $arena.appendChild(createPlayer(subZero));
 
-const showResults = function (name) {
+const showResults = (name) => {
   const $resultTitle = createElement('div', 'endFightTitle');
   if (name) {
     $resultTitle.innerText = name + ' wins';
@@ -29,7 +28,7 @@ const showResults = function (name) {
   return $resultTitle;
 }
 
-const createReloadButton = function () {
+const createReloadButton = () => {
   const $reloadButtonWrap = createElement('div', 'reloadWrap');
   const $reloadButton = createElement('button', 'button');
   $reloadButton.innerText = 'Reload';
@@ -42,7 +41,7 @@ const createReloadButton = function () {
   $arena.appendChild($reloadButtonWrap);
 };
 
-const enemyAttack = function () {
+const enemyAttack = () => {
   const hit = ATTACK[getRandom(3)-1];
   const defence = ATTACK[getRandom(3)-1];
 
@@ -53,7 +52,7 @@ const enemyAttack = function () {
   }
 };
 
-const playerAttack = function () {
+const playerAttack = () => {
   const attack = {};
 
   for (let item of $formFight) {
@@ -71,7 +70,7 @@ const playerAttack = function () {
   return attack;
 };
 
-const showResult = function (player1, player2) {
+const showResult = (player1, player2) => {
   const {
     name: player1Name,
     hp: player1Hp
@@ -87,10 +86,10 @@ const showResult = function (player1, player2) {
   }
 
   if (player1Hp === 0 && player1Hp <  player2Hp) {
-    generateLog('end', subZero, scorpion);
+    generateLog('end', player2, player1);
     $arena.appendChild(showResults(player2Name));
   } else if (player2Hp === 0 && player2Hp < player1Hp) {
-    generateLog('end', scorpion, subZero);
+    generateLog('end', player1, player2);
     $arena.appendChild(showResults(player1Name));
   } else if (player1Hp === 0 && player2Hp === 0) {
     generateLog('draw');
@@ -98,7 +97,7 @@ const showResult = function (player1, player2) {
   }
 };
 
-$formFight.addEventListener('submit', function (evt) {
+$formFight.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const enemy = enemyAttack();
   const player = playerAttack();
@@ -106,21 +105,21 @@ $formFight.addEventListener('submit', function (evt) {
   if (enemy.hit !== player.defence) {
     scorpion.changeHP(enemy.value);
     scorpion.renderHP();
-    generateLog($chat, 'hit', subZero, scorpion, enemy.value);
+    generateLog('hit', subZero, scorpion, enemy.value);
   }
   if (player.hit !== enemy.defence) {
     subZero.changeHP(player.value);
     subZero.renderHP();
-    generateLog($chat, 'hit', scorpion, subZero, player.value);
+    generateLog('hit', scorpion, subZero, player.value);
   }
   if (player.hit === enemy.defence) {
-    generateLog($chat, 'defence', scorpion, subZero);
+    generateLog('defence', scorpion, subZero);
   }
   if (player.hit === enemy.defence) {
-    generateLog($chat, 'defence', subZero, scorpion);
+    generateLog('defence', subZero, scorpion);
   }
 
   showResult(scorpion, subZero);
 });
 
-generateLog($chat, 'start', scorpion, subZero);
+generateLog('start', scorpion, subZero);

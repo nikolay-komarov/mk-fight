@@ -5,7 +5,8 @@ export const getCurrentDateToLog = () => {
   return dateToLog.toLocaleTimeString().slice(0, -3);
 };
 
-export const generateLog = ($chat, type, player1, player2, hitValue) => {
+export const generateLog = (type, player1, player2, hitValue) => {
+  const $chat = document.querySelector('.chat');
   const {
     name: player1Name,
   } = player1;
@@ -56,7 +57,7 @@ export const getRandom = (value) => {
   return Math.ceil(Math.random() * value);
 };
 
-export const createElement = function (teg, className) {
+export const createElement = (teg, className) => {
   const $el = document.createElement(teg);
   if (className) {
     $el.classList.add(className);
