@@ -1,48 +1,48 @@
 import {createElement} from "./utils.js";
 
-const changeHP = function (changeHPPoints) {
-  this.hp -= changeHPPoints;
-
-  if (this.hp < 0) {
-    this.hp = 0;
+class Player {
+  constructor(props) {
+    this.player = props.player;
+    this.name = props.name;
+    this.hp = props.hp;
+    this.img = props.img;
+    //todo: убрать функцию? - this.elHP = document.querySelector(`.player${props.player} .life`);
   }
-};
 
-const elHP = function () {
-  return document.querySelector('.player' + this.player + ' .life');
-};
+  attack = () => {
+    console.log(this.name + ' fight...');
+  }
 
-const renderHP = function () {
-  this.elHP().style.width = this.hp + '%';
-};
+  elHP = () => {
+    return document.querySelector(`.player${this.player} .life`);
+  }
 
-export const scorpion = {
+  changeHP = (changeHPPoints) => {
+    this.hp -= changeHPPoints;
+
+    if (this.hp < 0) {
+      this.hp = 0;
+    }
+  }
+
+  renderHP = () => {
+    this.elHP().style.width = `${this.hp}%`;
+  }
+}
+
+export const scorpion = new Player({
   player: 1,
   name: 'SCORPION',
   hp: 100,
   img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-  weapon: ['weapon1', 'weapon2'],
-  attack: function() {
-    console.log(this.name + ' fight...');
-  },
-  changeHP,
-  elHP,
-  renderHP,
-};
+});
 
-export const subZero = {
+export const subZero = new Player({
   player: 2,
   name: 'SUB-ZERO',
   hp: 100,
   img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-  weapon: ['weapon1', 'weapon2'],
-  attack: function() {
-    console.log(this.name + ' fight...');
-  },
-  changeHP,
-  elHP,
-  renderHP,
-};
+});
 
 export const createPlayer = ({player, hp, name, img}) => {
   const $player = createElement('div', 'player' + player);

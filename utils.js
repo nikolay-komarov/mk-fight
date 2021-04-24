@@ -5,7 +5,7 @@ export const getCurrentDateToLog = () => {
   return dateToLog.toLocaleTimeString().slice(0, -3);
 };
 
-export const generateLog = (type, player1, player2, hitValue) => {
+export const generateLog = (type, player1 = {}, player2 = {}, hitValue) => {
   const $chat = document.querySelector('.chat');
   const {
     name: player1Name,
