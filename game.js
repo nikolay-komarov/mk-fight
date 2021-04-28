@@ -129,9 +129,11 @@ export default class Game {
   };
 
   start = async () => {
-    const players = await this.api.getPlayers();
-    const p1 = players[getRandom(players.length) - 1];
-    const p2 = players[getRandom(players.length) - 1];
+    // const players = await this.api.getPlayers();
+    // const p1 = players[getRandom(players.length) - 1];
+    // const p2 = players[getRandom(players.length) - 1];
+    const p1 = await this.api.getRandomPlayer();
+    const p2 = await this.api.getRandomPlayer();
 
     this.player1 = new Player({
       ...p1,
