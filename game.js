@@ -1,11 +1,11 @@
-import {ATTACK, HIT} from "./const.js";
-import {Player, createPlayer, scorpion, subZero} from './player.js';
+import Player from './player.js';
 import Api from './api.js';
 
-import {createElement, generateLog, getRandom} from './utils.js';
+import {createElement, generateLog} from './utils.js';
 
 export default class Game {
   constructor() {
+    this.rootSelector = 'arenas';
     this.$arena = document.querySelector('.arenas');
     this.$randomButton = document.querySelector('.button');
     this.$formFight = document.querySelector('.control');
@@ -14,11 +14,6 @@ export default class Game {
 
     this.player1 = {};
     this.player2 = {};
-  }
-
-  addPlayers = () => {
-    this.$arena.appendChild(createPlayer(this.player1));
-    this.$arena.appendChild(createPlayer(this.player2));
   }
 
   showResults = (name) => {
@@ -45,23 +40,11 @@ export default class Game {
     this.$arena.appendChild($reloadButtonWrap);
   };
 
-  enemyAttack = () => {
-    const hit = ATTACK[getRandom(3)-1];
-    const defence = ATTACK[getRandom(3)-1];
-
-    return {
-      value: getRandom(HIT[hit]),
-      hit,
-      defence
-    }
-  };
-
   playerAttack = () => {
     const attack = {};
 
     for (let item of this.$formFight) {
       if (item.checked && item.name === 'hit') {
-        attack.value = getRandom(HIT[item.value]);
         attack.hit = item.value;
       }
       if (item.checked && item.name === 'defence') {
@@ -102,10 +85,14 @@ export default class Game {
   };
 
   addSubmitToFormFight = () => {
-    this.$formFight.addEventListener('submit', (evt) => {
+    this.$formFight.addEventListener('submit', async (evt) => {
       evt.preventDefault();
-      const enemy = this.enemyAttack();
-      const player = this.playerAttack();
+
+      const playerAttack = this.playerAttack();
+
+      const res = await this.api.getFight(playerAttack.hit, playerAttack.defence);
+      const enemy = res.player1;
+      const player = res.player2;
 
       if (enemy.hit !== player.defence) {
         this.player1.changeHP(enemy.value);
@@ -129,22 +116,29 @@ export default class Game {
   };
 
   start = async () => {
+    // пока оставим для реализации выбора игрока
+    // todo: реализовать выбор игрока
     // const players = await this.api.getPlayers();
     // const p1 = players[getRandom(players.length) - 1];
     // const p2 = players[getRandom(players.length) - 1];
+
     const p1 = await this.api.getRandomPlayer();
     const p2 = await this.api.getRandomPlayer();
 
     this.player1 = new Player({
       ...p1,
       player: 1,
+      rootSelector: this.rootSelector,
     });
     this.player2 = new Player({
       ...p2,
       player: 2,
+      rootSelector: this.rootSelector,
     });
 
-    this.addPlayers();
+    this.player1.renderPlayer();
+    this.player2.renderPlayer();
+
     this.addSubmitToFormFight();
     generateLog('start', this.player1, this.player2);
   }

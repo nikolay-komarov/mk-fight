@@ -1,4 +1,4 @@
-import {logs} from "./logs.js";
+import {logs} from "./const.js";
 
 export const getCurrentDateToLog = () => {
   const dateToLog = new Date();
