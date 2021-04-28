@@ -2,7 +2,7 @@ export default class Api {
   constructor() {
     this.urlPlayers = 'https://reactmarathon-api.herokuapp.com/api/mk/players';
     this.urlRandomPlayer = 'https://reactmarathon-api.herokuapp.com/api/mk/player/choose';
-    this.urlFight = 'http://reactmarathon-api.herokuapp.com/api/mk/player/fight';
+    this.urlFight = 'https://reactmarathon-api.herokuapp.com/api/mk/player/fight';
   }
 
   getPlayers = async () => {
