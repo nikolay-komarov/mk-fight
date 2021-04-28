@@ -33,8 +33,7 @@ export default class Game {
     $reloadButton.innerText = 'Reload';
 
     $reloadButton.addEventListener('click', function () {
-      const currentUrl = window.location.pathname;
-      window.location.pathname = currentUrl.replace('arena.html', 'index.html');
+      window.location.replace('index.html');
     });
 
     $reloadButtonWrap.appendChild($reloadButton);

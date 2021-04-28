@@ -49,8 +49,7 @@ async function init() {
       el.classList.add('active');
 
       setTimeout(() => {
-        const currentUrl = window.location.pathname;
-        window.location.pathname = currentUrl.replace('index.html', 'arena.html');
+        window.location.replace('arena.html');
       }, 1000);
     });
 

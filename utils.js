@@ -57,15 +57,6 @@ export const getRandom = (value) => {
   return Math.ceil(Math.random() * value);
 };
 
-// export const createElement = (tag, className) => {
-//   const $el = document.createElement(tag);
-//   if (className) {
-//     $el.classList.add(className);
-//   }
-//
-//   return $el;
-// };
-
 export const createElement = (tag, className) => {
   const $el = document.createElement(tag);
   if (className) {
