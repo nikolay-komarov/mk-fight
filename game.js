@@ -1,23 +1,24 @@
-import {HIT, ATTACK} from "./const.js";
-import {scorpion, subZero} from './player.js';
-import {createPlayer} from "./player.js";
+import {ATTACK, HIT} from "./const.js";
+import {Player, createPlayer, scorpion, subZero} from './player.js';
+import Api from './api.js';
 
-import {
-  generateLog,
-  getRandom,
-  createElement
-} from './utils.js';
+import {createElement, generateLog, getRandom} from './utils.js';
 
 export default class Game {
   constructor() {
     this.$arena = document.querySelector('.arenas');
     this.$randomButton = document.querySelector('.button');
     this.$formFight = document.querySelector('.control');
+
+    this.api = new Api();
+
+    this.player1 = {};
+    this.player2 = {};
   }
 
   addPlayers = () => {
-    this.$arena.appendChild(createPlayer(scorpion));
-    this.$arena.appendChild(createPlayer(subZero));
+    this.$arena.appendChild(createPlayer(this.player1));
+    this.$arena.appendChild(createPlayer(this.player2));
   }
 
   showResults = (name) => {
@@ -107,29 +108,42 @@ export default class Game {
       const player = this.playerAttack();
 
       if (enemy.hit !== player.defence) {
-        scorpion.changeHP(enemy.value);
-        scorpion.renderHP();
-        generateLog('hit', subZero, scorpion, enemy.value);
+        this.player1.changeHP(enemy.value);
+        this.player1.renderHP();
+        generateLog('hit', this.player2, this.player1, enemy.value);
       }
       if (player.hit !== enemy.defence) {
-        subZero.changeHP(player.value);
-        subZero.renderHP();
-        generateLog('hit', scorpion, subZero, player.value);
+        this.player2.changeHP(player.value);
+        this.player2.renderHP();
+        generateLog('hit', this.player1, this.player2, player.value);
       }
       if (player.hit === enemy.defence) {
-        generateLog('defence', scorpion, subZero);
+        generateLog('defence', this.player1, this.player2);
       }
       if (player.hit === enemy.defence) {
-        generateLog('defence', subZero, scorpion);
+        generateLog('defence', this.player2, this.player1);
       }
 
-      this.showResult(scorpion, subZero);
+      this.showResult(this.player1, this.player2);
     });
   };
 
-  start = () => {
+  start = async () => {
+    const players = await this.api.getPlayers();
+    const p1 = players[getRandom(players.length) - 1];
+    const p2 = players[getRandom(players.length) - 1];
+
+    this.player1 = new Player({
+      ...p1,
+      player: 1,
+    });
+    this.player2 = new Player({
+      ...p2,
+      player: 2,
+    });
+
     this.addPlayers();
     this.addSubmitToFormFight();
-    generateLog('start', scorpion, subZero);
+    generateLog('start', this.player1, this.player2);
   }
 }
