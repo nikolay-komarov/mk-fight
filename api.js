@@ -5,10 +5,9 @@ export default class Api {
     this.urlFight = 'http://reactmarathon-api.herokuapp.com/api/mk/player/fight';
   }
 
-  // пока оставим для реализации выбора игрока
-  // getPlayers = async () => {
-  //   return await fetch(this.urlPlayers).then(res => res.json());
-  // }
+  getPlayers = async () => {
+    return await fetch(this.urlPlayers).then(res => res.json());
+  }
 
   getRandomPlayer = async () => {
     return await fetch(this.urlRandomPlayer).then(res => res.json());

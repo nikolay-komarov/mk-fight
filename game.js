@@ -33,7 +33,8 @@ export default class Game {
     $reloadButton.innerText = 'Reload';
 
     $reloadButton.addEventListener('click', function () {
-      window.location.reload();
+      const currentUrl = window.location.pathname;
+      window.location.pathname = currentUrl.replace('arena.html', 'index.html');
     });
 
     $reloadButtonWrap.appendChild($reloadButton);
@@ -116,13 +117,7 @@ export default class Game {
   };
 
   start = async () => {
-    // пока оставим для реализации выбора игрока
-    // todo: реализовать выбор игрока
-    // const players = await this.api.getPlayers();
-    // const p1 = players[getRandom(players.length) - 1];
-    // const p2 = players[getRandom(players.length) - 1];
-
-    const p1 = await this.api.getRandomPlayer();
+    const p1 = JSON.parse(localStorage.getItem('player1'));
     const p2 = await this.api.getRandomPlayer();
 
     this.player1 = new Player({
