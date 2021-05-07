@@ -1,4 +1,4 @@
-import {logs} from "./logs.js";
+import {logs} from "./const.js";
 
 export const getCurrentDateToLog = () => {
   const dateToLog = new Date();
@@ -60,8 +60,14 @@ export const getRandom = (value) => {
 export const createElement = (tag, className) => {
   const $el = document.createElement(tag);
   if (className) {
-    $el.classList.add(className);
+    if (Array.isArray(className)) {
+      className.forEach(item => {
+        $el.classList.add(item);
+      })
+    } else {
+      $el.classList.add(className);
+    }
   }
 
   return $el;
-};
+}

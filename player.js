@@ -1,16 +1,13 @@
 import {createElement} from "./utils.js";
 
-class Player {
+export default class Player {
   constructor(props) {
     this.player = props.player;
     this.name = props.name;
     this.hp = props.hp;
     this.img = props.img;
-    //todo: убрать функцию? - this.elHP = document.querySelector(`.player${props.player} .life`);
-  }
 
-  attack = () => {
-    console.log(this.name + ' fight...');
+    this.rootSelector = props.rootSelector;
   }
 
   elHP = () => {
@@ -28,43 +25,32 @@ class Player {
   renderHP = () => {
     this.elHP().style.width = `${this.hp}%`;
   }
+
+  renderPlayer = () => {
+    const $player = createElement('div', `player${this.player}`);
+
+    const $progressbar = createElement('div', 'progressbar');
+
+    const $life = createElement('div', 'life');
+    $life.style.width = this.hp + '%';
+
+    const $name = createElement('div', 'name');
+    $name.innerText = this.name;
+
+    const $character = createElement('div', 'character');
+
+    const $image = createElement('img');
+    $image.src = this.img;
+
+    $player.appendChild($progressbar);
+    $progressbar.appendChild($life);
+    $progressbar.appendChild($name);
+    $player.appendChild($character);
+    $character.appendChild($image);
+
+    const $root = document.querySelector(`.${this.rootSelector}`);
+    $root.appendChild($player);
+
+    return $player;
+  };
 }
-
-export const scorpion = new Player({
-  player: 1,
-  name: 'SCORPION',
-  hp: 100,
-  img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-});
-
-export const subZero = new Player({
-  player: 2,
-  name: 'SUB-ZERO',
-  hp: 100,
-  img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-});
-
-export const createPlayer = ({player, hp, name, img}) => {
-  const $player = createElement('div', 'player' + player);
-
-  const $progressbar = createElement('div', 'progressbar');
-
-  const $life = createElement('div', 'life');
-  $life.style.width = hp + '%';
-
-  const $name = createElement('div', 'name');
-  $name.innerText = name;
-
-  const $character = createElement('div', 'character');
-
-  const $image = createElement('img');
-  $image.src = img;
-
-  $player.appendChild($progressbar);
-  $progressbar.appendChild($life);
-  $progressbar.appendChild($name);
-  $player.appendChild($character);
-  $character.appendChild($image);
-
-  return $player;
-};
